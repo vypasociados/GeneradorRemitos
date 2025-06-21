@@ -3,544 +3,753 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Generador de Remitos V&P</title>
+    <title>Generador de Recibo de Expensas</title>
     <style>
-      :root {
-        --primary-color: #3498db;
-        --secondary-color: #2980b9;
-        --background-color: #f9f9f9;
-        --border-color: #e0e0e0;
-        --text-color: #333;
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
       }
 
       body {
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
         padding: 20px;
-        background-color: var(--background-color);
-        color: var(--text-color);
       }
 
       .container {
-        max-width: 800px;
+        max-width: 1200px;
         margin: 0 auto;
         background: white;
-        padding: 20px;
         border-radius: 8px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      }
-
-      h1 {
-        text-align: center;
-        color: var(--primary-color);
-        margin-bottom: 20px;
+        overflow: hidden;
       }
 
       .form-section {
-        margin-bottom: 20px;
-        padding: 15px;
-        border: 1px solid var(--border-color);
-        border-radius: 5px;
+        padding: 20px;
+        background: #e8f4fd;
+        border-bottom: 2px solid #007bff;
       }
 
       .form-section h2 {
-        margin-top: 0;
-        font-size: 18px;
-        color: var(--secondary-color);
+        color: #007bff;
+        margin-bottom: 20px;
+        text-align: center;
       }
 
-      .form-row {
-        display: flex;
-        margin-bottom: 10px;
-        flex-wrap: wrap;
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
       }
 
       .form-group {
-        flex: 1;
-        min-width: 200px;
-        margin-right: 10px;
-        margin-bottom: 10px;
-      }
-
-      .form-group:last-child {
-        margin-right: 0;
-      }
-
-      label {
-        display: block;
-        margin-bottom: 5px;
-        font-weight: 500;
-      }
-
-      input,
-      textarea,
-      select {
-        width: 100%;
-        padding: 8px;
-        border: 1px solid var(--border-color);
-        border-radius: 4px;
-        font-family: inherit;
-        font-size: 14px;
-      }
-
-      textarea {
-        resize: vertical;
-        min-height: 60px;
-      }
-
-      button {
-        background-color: var(--primary-color);
-        color: white;
-        border: none;
-        padding: 10px 15px;
-        cursor: pointer;
-        border-radius: 4px;
-        font-size: 16px;
-        transition: background-color 0.2s;
-      }
-
-      button:hover {
-        background-color: var(--secondary-color);
-      }
-
-      .actions {
         display: flex;
-        justify-content: space-between;
-        margin-top: 20px;
+        flex-direction: column;
       }
 
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 10px;
+      .form-group label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: #333;
       }
 
-      table th,
-      table td {
-        border: 1px solid var(--border-color);
-        padding: 8px;
-        text-align: left;
-      }
-
-      table th {
-        background-color: #f2f2f2;
-      }
-
-      .item-row input {
-        width: 100%;
-        border: none;
-        background: transparent;
+      .form-group input {
+        padding: 8px 12px;
+        border: 2px solid #ddd;
+        border-radius: 4px;
         font-size: 14px;
+        transition: border-color 0.3s;
       }
 
-      .item-row input:focus {
+      .form-group input:focus {
         outline: none;
-        background-color: #f0f8ff;
+        border-color: #007bff;
       }
 
-      .add-item {
-        background-color: #27ae60;
-        margin-bottom: 20px;
+      .btn-generate {
+        background: #007bff;
+        color: white;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        margin: 20px auto;
+        display: block;
+        transition: background-color 0.3s;
       }
 
-      .remove-item {
-        background-color: #e74c3c;
-        padding: 5px 10px;
-        font-size: 12px;
-        margin-left: 5px;
+      .btn-generate:hover {
+        background: #0056b3;
       }
 
-      #preview {
-        display: none;
-        margin-top: 30px;
+      .receipt-container {
         padding: 20px;
-        border: 1px solid var(--border-color);
         background: white;
       }
 
-      .preview-header {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 20px;
-        padding-bottom: 10px;
-        border-bottom: 2px solid var(--primary-color);
+      .receipt {
+        width: 210mm;
+        min-height: 297mm;
+        margin: 0 auto;
+        background: white;
+        border: 1px solid #ddd;
+        page-break-after: always;
       }
 
-      .preview-info {
-        margin-bottom: 20px;
+      .receipt-header {
         display: flex;
-        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+        border-bottom: 2px solid #333;
       }
 
-      .preview-info div {
+      .logo {
+        width: 80px;
+        height: 60px;
+        margin-right: 20px;
+        background: #333;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: 14px;
+      }
+
+      .company-info {
         flex: 1;
       }
 
-      .preview-table {
-        width: 100%;
-        border-collapse: collapse;
+      .company-info h1 {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .company-info p {
+        font-size: 12px;
+        margin: 2px 0;
+      }
+
+      .receipt-body {
+        display: flex;
+        height: calc(100% - 120px);
+      }
+
+      .receipt-left,
+      .receipt-right {
+        flex: 1;
+        padding: 15px;
+        border-right: 1px dashed #333;
+      }
+
+      .receipt-right {
+        border-right: none;
+        border-left: 1px dashed #333;
+      }
+
+      .receipt-section {
         margin-bottom: 20px;
       }
 
-      .preview-table th,
-      .preview-table td {
-        border: 1px solid #ddd;
-        padding: 8px;
+      .receipt-section h3 {
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        background: #f0f0f0;
+        padding: 5px;
+        border: 1px solid #333;
       }
 
-      .preview-footer {
+      .info-row {
         display: flex;
         justify-content: space-between;
-        margin-top: 30px;
-        padding-top: 20px;
-        border-top: 1px solid var(--border-color);
+        margin-bottom: 3px;
+        font-size: 12px;
+      }
+
+      .info-row strong {
+        font-weight: bold;
+      }
+
+      .concepts-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+        margin-top: 10px;
+      }
+
+      .concepts-table th,
+      .concepts-table td {
+        padding: 5px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .concepts-table th {
+        background: #f0f0f0;
+        font-weight: bold;
+      }
+
+      .amount {
+        text-align: right !important;
+      }
+
+      .total-row {
+        border-top: 2px solid #333;
+        font-weight: bold;
+      }
+
+      .payment-info {
+        margin-top: 20px;
+      }
+
+      .signature-box {
+        border: 1px solid #333;
+        height: 60px;
+        margin-top: 20px;
+        position: relative;
+      }
+
+      .signature-label {
+        position: absolute;
+        bottom: 5px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 10px;
+        background: white;
+        padding: 0 5px;
+      }
+
+      .footer-info {
+        font-size: 10px;
+        text-align: center;
+        margin-top: 20px;
+        padding: 10px;
+        background: #f0f0f0;
+        border-top: 1px solid #333;
       }
 
       @media print {
-        .container:not(#preview) {
+        body {
+          background: white;
+          padding: 0;
+        }
+
+        .form-section {
           display: none;
         }
 
-        #preview {
-          display: block !important;
-          padding: 0;
+        .receipt {
           border: none;
           box-shadow: none;
-        }
-
-        body {
-          background-color: white;
-          padding: 0;
           margin: 0;
+          width: 100%;
         }
+      }
+
+      .btn-print {
+        background: #28a745;
+        color: white;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        margin: 10px;
+        transition: background-color 0.3s;
+      }
+
+      .btn-print:hover {
+        background: #1e7e34;
+      }
+
+      .button-container {
+        text-align: center;
+        margin: 20px 0;
       }
     </style>
   </head>
   <body>
     <div class="container">
-      <h1>Generador de Remitos V&P</h1>
-
+      <!-- Formulario de datos -->
       <div class="form-section">
-        <h2>Información de la Empresa</h2>
-        <div class="form-row">
+        <h2>📋 Generador de Recibo de Expensas</h2>
+
+        <div class="form-grid">
+          <!-- Datos del Consorcio -->
           <div class="form-group">
-            <label for="companyName">Nombre de la Empresa</label>
-            <input type="text" id="companyName" placeholder="Tu Empresa S.A." />
-          </div>
-          <div class="form-group">
-            <label for="companyAddress">Dirección</label>
+            <label for="consorcio">Nombre del Consorcio:</label>
             <input
               type="text"
-              id="companyAddress"
-              placeholder="Calle, Ciudad, CP"
+              id="consorcio"
+              value="CONS. DE PROP. AV. INDEPENDENCIA 3702"
             />
           </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="companyPhone">Teléfono</label>
-            <input type="text" id="companyPhone" placeholder="+XX XXXXXXXX" />
-          </div>
-          <div class="form-group">
-            <label for="companyEmail">Email</label>
-            <input
-              type="email"
-              id="companyEmail"
-              placeholder="empresa@ejemplo.com"
-            />
-          </div>
-        </div>
-      </div>
 
-      <div class="form-section">
-        <h2>Información del Remito</h2>
-        <div class="form-row">
+          <!-- Datos del Propietario -->
           <div class="form-group">
-            <label for="remitNumber">Número de Remito</label>
-            <input type="text" id="remitNumber" placeholder="0001" />
+            <label for="propietario">Propietario:</label>
+            <input type="text" id="propietario" value="NAVARRO QUANTIN J." />
           </div>
-          <div class="form-group">
-            <label for="remitDate">Fecha</label>
-            <input type="date" id="remitDate" />
-          </div>
-        </div>
-      </div>
 
-      <div class="form-section">
-        <h2>Información del Cliente</h2>
-        <div class="form-row">
           <div class="form-group">
-            <label for="clientName">Nombre del Cliente</label>
-            <input type="text" id="clientName" placeholder="Cliente S.A." />
-          </div>
-          <div class="form-group">
-            <label for="clientAddress">Dirección</label>
+            <label for="direccion">Dirección:</label>
             <input
               type="text"
-              id="clientAddress"
-              placeholder="Calle, Ciudad, CP"
+              id="direccion"
+              value="Av.Independencia 3702-CABA"
             />
           </div>
-        </div>
-        <div class="form-row">
+
           <div class="form-group">
-            <label for="clientPhone">Teléfono</label>
-            <input type="text" id="clientPhone" placeholder="+XX XXXXXXXX" />
+            <label for="cuit">CUIT:</label>
+            <input type="text" id="cuit" value="30-71470801-1" />
           </div>
+
           <div class="form-group">
-            <label for="clientEmail">Email</label>
-            <input
-              type="email"
-              id="clientEmail"
-              placeholder="cliente@ejemplo.com"
-            />
+            <label for="departamento">Departamento:</label>
+            <input type="text" id="departamento" value='4°"B"' />
+          </div>
+
+          <div class="form-group">
+            <label for="uf">U.F.:</label>
+            <input type="text" id="uf" value="9" />
+          </div>
+
+          <!-- Datos del Recibo -->
+          <div class="form-group">
+            <label for="fechaPago">Fecha de Pago:</label>
+            <input type="date" id="fechaPago" value="2024-01-04" />
+          </div>
+
+          <div class="form-group">
+            <label for="conceptos">Conceptos:</label>
+            <input type="text" id="conceptos" value="ENERO 2024" />
+          </div>
+
+          <!-- Montos -->
+          <div class="form-group">
+            <label for="expensasA">Expensas A:</label>
+            <input type="number" id="expensasA" value="43954.09" step="0.01" />
+          </div>
+
+          <div class="form-group">
+            <label for="expensasB">Expensas B:</label>
+            <input type="number" id="expensasB" value="0" step="0.01" />
+          </div>
+
+          <div class="form-group">
+            <label for="expensasC">Expensas C:</label>
+            <input type="number" id="expensasC" value="0" step="0.01" />
+          </div>
+
+          <div class="form-group">
+            <label for="otrosConceptos">Otros Conceptos:</label>
+            <input type="number" id="otrosConceptos" value="0" step="0.01" />
+          </div>
+        </div>
+
+        <div class="button-container">
+          <button class="btn-generate" onclick="generarRecibo()">
+            🧾 Generar Recibo
+          </button>
+          <button class="btn-print" onclick="imprimirRecibo()">
+            🖨️ Imprimir
+          </button>
+        </div>
+      </div>
+
+      <!-- Recibo generado -->
+      <div class="receipt-container">
+        <div class="receipt" id="recibo">
+          <!-- Header -->
+          <div class="receipt-header">
+            <div class="logo">V&P<br />Asociados</div>
+            <div class="company-info">
+              <h1>V&P ASOCIADOS</h1>
+              <p>Gestión de Consorcios y Empresas</p>
+              <p>info@vypasociados.com.ar</p>
+              <p>www.vypasociados.com.ar</p>
+            </div>
+          </div>
+
+          <!-- Body -->
+          <div class="receipt-body">
+            <!-- Talón para la administración -->
+            <div class="receipt-left">
+              <div class="receipt-section">
+                <h3>RECIBO DE EXPENSAS</h3>
+                <p style="font-size: 12px; margin-bottom: 10px">
+                  PROPIEDAD HORIZONTAL CCyCN
+                </p>
+              </div>
+
+              <div class="receipt-section">
+                <h3>ADMINISTRACIÓN</h3>
+                <div class="info-row">
+                  <span>Nombre:</span>
+                  <span>V&P ASOCIADOS</span>
+                </div>
+                <div class="info-row">
+                  <span>Domicilio:</span>
+                  <span>Av. J. B. Justo 2634 - CABA</span>
+                </div>
+                <div class="info-row">
+                  <span>CUIT:</span>
+                  <span>27-16345779-8</span>
+                </div>
+                <div class="info-row">
+                  <span>RPA:</span>
+                  <span>9735</span>
+                </div>
+              </div>
+
+              <div class="receipt-section">
+                <h3 id="consorcio-left">
+                  CONS. DE PROP. AV. INDEPENDENCIA 3702
+                </h3>
+                <div class="info-row">
+                  <span>Propietario:</span>
+                  <span id="propietario-left">NAVARRO QUANTIN J.</span>
+                </div>
+                <div class="info-row">
+                  <span>Dirección:</span>
+                  <span id="direccion-left">Av.Independencia 3702-CABA</span>
+                </div>
+                <div class="info-row">
+                  <span>CUIT:</span>
+                  <span id="cuit-left">30-71470801-1</span>
+                </div>
+                <div class="info-row">
+                  <span>Dpto.:</span>
+                  <span id="departamento-left">4°"B"</span>
+                </div>
+                <div class="info-row">
+                  <span>U.F.:</span>
+                  <span id="uf-left">9</span>
+                </div>
+              </div>
+
+              <div class="receipt-section">
+                <div class="info-row">
+                  <span>Vencimiento:</span>
+                  <span>--------------</span>
+                </div>
+                <div class="info-row">
+                  <span>Fecha de pago:</span>
+                  <span id="fechaPago-left">04/01/2024</span>
+                </div>
+              </div>
+
+              <div class="receipt-section">
+                <h3>Conceptos <span id="conceptos-left">ENERO 2024</span></h3>
+                <table class="concepts-table">
+                  <tr>
+                    <td>Expensas A:</td>
+                    <td class="amount">$</td>
+                    <td class="amount" id="expensasA-left">43.954,09</td>
+                  </tr>
+                  <tr>
+                    <td>Expensas B:</td>
+                    <td class="amount">$</td>
+                    <td class="amount" id="expensasB-left">---------</td>
+                  </tr>
+                  <tr>
+                    <td>Expensas C:</td>
+                    <td class="amount">$</td>
+                    <td class="amount" id="expensasC-left">---------</td>
+                  </tr>
+                  <tr>
+                    <td>Otros conceptos:</td>
+                    <td class="amount">$</td>
+                    <td class="amount" id="otrosConceptos-left">---------</td>
+                  </tr>
+                  <tr>
+                    <td>Intereses por mora:</td>
+                    <td class="amount">$</td>
+                    <td class="amount">---------</td>
+                  </tr>
+                  <tr class="total-row">
+                    <td><strong>TOTAL</strong></td>
+                    <td class="amount"><strong>$</strong></td>
+                    <td class="amount" id="total-left">
+                      <strong>43.954,09</strong>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+
+              <div class="payment-info">
+                <div class="info-row">
+                  <span>Lugar y forma de pago:</span>
+                </div>
+                <div class="info-row">
+                  <span>CABA - TRANSF.</span>
+                </div>
+              </div>
+
+              <div
+                style="margin-top: 30px; text-align: center; font-size: 10px"
+              >
+                <p><strong>Talón para</strong></p>
+                <p><strong>la administración</strong></p>
+              </div>
+            </div>
+
+            <!-- Talón para el propietario -->
+            <div class="receipt-right">
+              <div class="receipt-section">
+                <h3>RECIBO DE EXPENSAS</h3>
+                <p style="font-size: 12px; margin-bottom: 10px">
+                  PROPIEDAD HORIZONTAL CCyCN
+                </p>
+              </div>
+
+              <div class="receipt-section">
+                <h3>ADMINISTRACIÓN</h3>
+                <div class="info-row">
+                  <span>Nombre:</span>
+                  <span>V&P ASOCIADOS</span>
+                </div>
+                <div class="info-row">
+                  <span>Domicilio:</span>
+                  <span>Av. J. B. Justo 2634 - CABA</span>
+                </div>
+                <div class="info-row">
+                  <span>CUIT:</span>
+                  <span>27-16345779-8</span>
+                </div>
+                <div class="info-row">
+                  <span>RPA:</span>
+                  <span>9735</span>
+                </div>
+              </div>
+
+              <div class="receipt-section">
+                <h3 id="consorcio-right">
+                  CONS. DE PROP. AV. INDEPENDENCIA 3702
+                </h3>
+                <div class="info-row">
+                  <span>Propietario:</span>
+                  <span id="propietario-right">NAVARRO QUANTIN J.</span>
+                </div>
+                <div class="info-row">
+                  <span>Dirección:</span>
+                  <span id="direccion-right">Av.Independencia 3702-CABA</span>
+                </div>
+                <div class="info-row">
+                  <span>CUIT:</span>
+                  <span id="cuit-right">30-71470801-1</span>
+                </div>
+                <div class="info-row">
+                  <span>Dpto.:</span>
+                  <span id="departamento-right">4°"B"</span>
+                </div>
+                <div class="info-row">
+                  <span>U.F.:</span>
+                  <span id="uf-right">9</span>
+                </div>
+              </div>
+
+              <div class="receipt-section">
+                <div class="info-row">
+                  <span>Vencimiento:</span>
+                  <span>--------------</span>
+                </div>
+                <div class="info-row">
+                  <span>Fecha de pago:</span>
+                  <span id="fechaPago-right">4/1/2024</span>
+                </div>
+              </div>
+
+              <div class="receipt-section">
+                <h3>Conceptos <span id="conceptos-right">ENERO 2024</span></h3>
+                <table class="concepts-table">
+                  <tr>
+                    <td>Expensas A:</td>
+                    <td class="amount">$</td>
+                    <td class="amount" id="expensasA-right">43.954,09</td>
+                  </tr>
+                  <tr>
+                    <td>Expensas B:</td>
+                    <td class="amount">$</td>
+                    <td class="amount" id="expensasB-right">---------</td>
+                  </tr>
+                  <tr>
+                    <td>Expensas C:</td>
+                    <td class="amount">$</td>
+                    <td class="amount" id="expensasC-right">---------</td>
+                  </tr>
+                  <tr>
+                    <td>Otros conceptos:</td>
+                    <td class="amount">$</td>
+                    <td class="amount" id="otrosConceptos-right">---------</td>
+                  </tr>
+                  <tr>
+                    <td>Intereses por mora:</td>
+                    <td class="amount">$</td>
+                    <td class="amount">---------</td>
+                  </tr>
+                  <tr class="total-row">
+                    <td><strong>TOTAL</strong></td>
+                    <td class="amount"><strong>$</strong></td>
+                    <td class="amount" id="total-right">
+                      <strong>43.954,09</strong>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+
+              <div class="payment-info">
+                <div class="info-row">
+                  <span>Lugar y forma</span>
+                </div>
+                <div class="info-row">
+                  <span>de pago - CABA -</span>
+                </div>
+                <div class="info-row">
+                  <span>TRANSF.</span>
+                </div>
+              </div>
+
+              <div class="signature-box">
+                <div class="signature-label">Conforme</div>
+              </div>
+
+              <div
+                style="margin-top: 20px; text-align: center; font-size: 10px"
+              >
+                <p><strong>Talón para</strong></p>
+                <p><strong>el propietario</strong></p>
+                <p style="margin-top: 10px">
+                  Conforme Anexo II programa Mis Expensas GCBA
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div class="footer-info">
+            <p>
+              Ante cualquier irregularidad podés llamar al 147, chatear en
+              buenosaires.gob.ar/ba147 o escribirnos en
+              facebook.com/badefensaconsumidor y @BAConsumidor
+            </p>
+            <p style="margin-top: 10px">
+              <strong
+                >Mis Expensas | Gobierno de la Ciudad |
+                www.buenosaires.gob.ar</strong
+              >
+            </p>
           </div>
         </div>
       </div>
-
-      <div class="form-section">
-        <h2>Ítems</h2>
-        <table id="itemsTable">
-          <thead>
-            <tr>
-              <th style="width: 5%">N°</th>
-              <th style="width: 10%">Cantidad</th>
-              <th style="width: 55%">Descripción</th>
-              <th style="width: 15%">Observaciones</th>
-              <th style="width: 15%">Acciones</th>
-            </tr>
-          </thead>
-          <tbody id="itemsBody">
-            <tr class="item-row">
-              <td>1</td>
-              <td><input type="number" class="item-qty" value="1" /></td>
-              <td>
-                <input
-                  type="text"
-                  class="item-desc"
-                  placeholder="Descripción del ítem"
-                />
-              </td>
-              <td>
-                <input
-                  type="text"
-                  class="item-obs"
-                  placeholder="Observaciones"
-                />
-              </td>
-              <td><button class="remove-item">Eliminar</button></td>
-            </tr>
-          </tbody>
-        </table>
-        <button class="add-item" id="addItem">+ Agregar Ítem</button>
-      </div>
-
-      <div class="form-section">
-        <h2>Información Adicional</h2>
-        <div class="form-group">
-          <label for="notes">Notas</label>
-          <textarea
-            id="notes"
-            placeholder="Información adicional, condiciones, etc."
-          ></textarea>
-        </div>
-      </div>
-
-      <div class="actions">
-        <button id="generateRemit">Generar Remito</button>
-        <button id="printRemit" style="display: none">Imprimir Remito</button>
-      </div>
-    </div>
-
-    <div id="preview" class="container">
-      <!-- El remito generado aparecerá aquí -->
     </div>
 
     <script>
-      // Establecer la fecha actual en el campo fecha
-      document.getElementById("remitDate").valueAsDate = new Date();
-
-      // Agregar nuevo ítem
-      document.getElementById("addItem").addEventListener("click", function () {
-        const itemsBody = document.getElementById("itemsBody");
-        const rowCount = itemsBody.rows.length;
-
-        const newRow = document.createElement("tr");
-        newRow.className = "item-row";
-
-        newRow.innerHTML = `
-                <td>${rowCount + 1}</td>
-                <td><input type="number" class="item-qty" value="1"></td>
-                <td><input type="text" class="item-desc" placeholder="Descripción del ítem"></td>
-                <td><input type="text" class="item-obs" placeholder="Observaciones"></td>
-                <td><button class="remove-item">Eliminar</button></td>
-            `;
-
-        itemsBody.appendChild(newRow);
-
-        // Agregar evento a botón eliminar
-        newRow
-          .querySelector(".remove-item")
-          .addEventListener("click", removeItem);
-      });
-
-      // Eliminar ítem
-      document.querySelectorAll(".remove-item").forEach((button) => {
-        button.addEventListener("click", removeItem);
-      });
-
-      function removeItem() {
-        const row = this.closest("tr");
-        row.parentNode.removeChild(row);
-        renumberRows();
-      }
-
-      // Renumerar filas después de eliminar
-      function renumberRows() {
-        const rows = document.getElementById("itemsBody").rows;
-        for (let i = 0; i < rows.length; i++) {
-          rows[i].cells[0].textContent = i + 1;
+      function formatearNumero(numero) {
+        if (numero == 0 || numero == "" || numero == null) {
+          return "---------";
         }
+        return new Intl.NumberFormat("es-AR", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }).format(numero);
       }
 
-      // Generar remito
-      document
-        .getElementById("generateRemit")
-        .addEventListener("click", function () {
-          // Recopilar datos del formulario
-          const companyName =
-            document.getElementById("companyName").value ||
-            "(Nombre de la Empresa)";
-          const companyAddress =
-            document.getElementById("companyAddress").value ||
-            "(Dirección de la Empresa)";
-          const companyPhone =
-            document.getElementById("companyPhone").value || "";
-          const companyEmail =
-            document.getElementById("companyEmail").value || "";
+      function formatearFecha(fecha) {
+        const date = new Date(fecha);
+        return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+      }
 
-          const remitNumber =
-            document.getElementById("remitNumber").value || "0001";
-          const remitDate = document.getElementById("remitDate").value
-            ? new Date(
-                document.getElementById("remitDate").value
-              ).toLocaleDateString()
-            : new Date().toLocaleDateString();
+      function generarRecibo() {
+        // Obtener valores del formulario
+        const consorcio = document.getElementById("consorcio").value;
+        const propietario = document.getElementById("propietario").value;
+        const direccion = document.getElementById("direccion").value;
+        const cuit = document.getElementById("cuit").value;
+        const departamento = document.getElementById("departamento").value;
+        const uf = document.getElementById("uf").value;
+        const fechaPago = document.getElementById("fechaPago").value;
+        const conceptos = document.getElementById("conceptos").value;
 
-          const clientName =
-            document.getElementById("clientName").value ||
-            "(Nombre del Cliente)";
-          const clientAddress =
-            document.getElementById("clientAddress").value ||
-            "(Dirección del Cliente)";
-          const clientPhone =
-            document.getElementById("clientPhone").value || "";
-          const clientEmail =
-            document.getElementById("clientEmail").value || "";
+        // Obtener montos
+        const expensasA =
+          parseFloat(document.getElementById("expensasA").value) || 0;
+        const expensasB =
+          parseFloat(document.getElementById("expensasB").value) || 0;
+        const expensasC =
+          parseFloat(document.getElementById("expensasC").value) || 0;
+        const otrosConceptos =
+          parseFloat(document.getElementById("otrosConceptos").value) || 0;
 
-          const notes = document.getElementById("notes").value || "";
+        // Calcular total
+        const total = expensasA + expensasB + expensasC + otrosConceptos;
 
-          // Recopilar ítems
-          const items = [];
-          const itemRows = document.querySelectorAll(".item-row");
-          itemRows.forEach((row) => {
-            const qty = row.querySelector(".item-qty").value || "1";
-            const desc =
-              row.querySelector(".item-desc").value || "(Descripción)";
-            const obs = row.querySelector(".item-obs").value || "";
+        // Actualizar lado izquierdo (administración)
+        document.getElementById("consorcio-left").textContent = consorcio;
+        document.getElementById("propietario-left").textContent = propietario;
+        document.getElementById("direccion-left").textContent = direccion;
+        document.getElementById("cuit-left").textContent = cuit;
+        document.getElementById("departamento-left").textContent = departamento;
+        document.getElementById("uf-left").textContent = uf;
+        document.getElementById("fechaPago-left").textContent =
+          formatearFecha(fechaPago);
+        document.getElementById("conceptos-left").textContent = conceptos;
+        document.getElementById("expensasA-left").textContent =
+          formatearNumero(expensasA);
+        document.getElementById("expensasB-left").textContent =
+          formatearNumero(expensasB);
+        document.getElementById("expensasC-left").textContent =
+          formatearNumero(expensasC);
+        document.getElementById("otrosConceptos-left").textContent =
+          formatearNumero(otrosConceptos);
+        document.getElementById("total-left").innerHTML =
+          "<strong>" + formatearNumero(total) + "</strong>";
 
-            items.push({ qty, desc, obs });
-          });
+        // Actualizar lado derecho (propietario)
+        document.getElementById("consorcio-right").textContent = consorcio;
+        document.getElementById("propietario-right").textContent = propietario;
+        document.getElementById("direccion-right").textContent = direccion;
+        document.getElementById("cuit-right").textContent = cuit;
+        document.getElementById("departamento-right").textContent =
+          departamento;
+        document.getElementById("uf-right").textContent = uf;
+        document.getElementById("fechaPago-right").textContent =
+          formatearFecha(fechaPago);
+        document.getElementById("conceptos-right").textContent = conceptos;
+        document.getElementById("expensasA-right").textContent =
+          formatearNumero(expensasA);
+        document.getElementById("expensasB-right").textContent =
+          formatearNumero(expensasB);
+        document.getElementById("expensasC-right").textContent =
+          formatearNumero(expensasC);
+        document.getElementById("otrosConceptos-right").textContent =
+          formatearNumero(otrosConceptos);
+        document.getElementById("total-right").innerHTML =
+          "<strong>" + formatearNumero(total) + "</strong>";
 
-          // Generar HTML del remito
-          const remitHTML = `
-                <div class="preview-header">
-                    <div>
-                        <h2>${companyName}</h2>
-                        <p>${companyAddress}</p>
-                        <p>${companyPhone}</p>
-                        <p>${companyEmail}</p>
-                    </div>
-                    <div style="text-align: right;">
-                        <h1>REMITO</h1>
-                        <h3>N° ${remitNumber}</h3>
-                        <p>Fecha: ${remitDate}</p>
-                    </div>
-                </div>
-                
-                <div class="preview-info">
-                    <div>
-                        <h3>Cliente:</h3>
-                        <p><strong>${clientName}</strong></p>
-                        <p>${clientAddress}</p>
-                        <p>${clientPhone}</p>
-                        <p>${clientEmail}</p>
-                    </div>
-                </div>
-                
-                <table class="preview-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 5%;">N°</th>
-                            <th style="width: 10%;">Cantidad</th>
-                            <th style="width: 65%;">Descripción</th>
-                            <th style="width: 20%;">Observaciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${items
-                          .map(
-                            (item, index) => `
-                            <tr>
-                                <td>${index + 1}</td>
-                                <td>${item.qty}</td>
-                                <td>${item.desc}</td>
-                                <td>${item.obs}</td>
-                            </tr>
-                        `
-                          )
-                          .join("")}
-                    </tbody>
-                </table>
-                
-                ${
-                  notes
-                    ? `
-                <div style="margin-top: 20px;">
-                    <h3>Notas:</h3>
-                    <p>${notes}</p>
-                </div>
-                `
-                    : ""
-                }
-                
-                <div class="preview-footer">
-                    <div style="text-align: left; flex: 1;">
-                        <p>Recibido por:</p>
-                        <div style="margin-top: 50px; border-top: 1px solid #333; display: inline-block; padding: 0 20px;">
-                            Firma
-                        </div>
-                    </div>
-                    <div style="text-align: right; flex: 1;">
-                        <div style="margin-top: 50px; border-top: 1px solid #333; display: inline-block; padding: 0 20px;">
-                            Sello y Firma
-                        </div>
-                    </div>
-                </div>
-            `;
+        // Scroll al recibo
+        document
+          .getElementById("recibo")
+          .scrollIntoView({ behavior: "smooth" });
+      }
 
-          // Mostrar la vista previa
-          document.getElementById("preview").innerHTML = remitHTML;
-          document.getElementById("preview").style.display = "block";
-          document.getElementById("printRemit").style.display = "inline-block";
-        });
+      function imprimirRecibo() {
+        window.print();
+      }
 
-      // Imprimir remito
-      document
-        .getElementById("printRemit")
-        .addEventListener("click", function () {
-          window.print();
-        });
+      // Generar recibo inicial al cargar la página
+      window.addEventListener("load", generarRecibo);
+
+      // Actualizar en tiempo real cuando cambian los valores
+      document.querySelectorAll("input").forEach((input) => {
+        input.addEventListener("input", generarRecibo);
+      });
     </script>
   </body>
 </html>
